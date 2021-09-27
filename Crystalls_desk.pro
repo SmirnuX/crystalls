@@ -12,7 +12,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    Smirnov.cpp
+    Smirnov.cpp \
+    Misc.cpp \
+    crystalls.cpp \
+    matrix.cpp
 
 HEADERS  += mainwindow.h
 

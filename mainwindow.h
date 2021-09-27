@@ -12,24 +12,9 @@
 #include <qmath.h>
 #include <math.h>
 
-#define PI
+class Point3D;
 
-
-
-class Point3D
-{
-public:
-    Point3D();
-    double x;
-    double y;
-    double z;
-    QString Show();
-    void Set(double _x, double _y, double _z);
-};
-
-void drawLine3D(QPainter* painter, Point3D* a, Point3D* b, int dx = 0, int dy = 0, int y_min = -100, int y_max = 100);
-
-class Crystall
+class Crystall  //Базовый класс кристаллов
 {
 public:
     QString name;   //Название кристалла
@@ -39,6 +24,8 @@ public:
     Point3D* turned_vertexes;   //Массив вершин после изменений
     double a, b, g;    //Углы поворота
     double scale;  //Масштаб
+    double dx, dy, dz;  //Перенос
+    bool reflectXOY, reflectXOZ, reflectYOZ;    //Отражение
     //Массивы граней - edges_from - содержит номера начальных точек из vertexes, edged_to - номера конечных точек.
     //То есть, первая грань идет из vertexes[edges_from[0]] в vertexes[edges_to[0]]
     int* edges_from;
@@ -53,6 +40,7 @@ public:
     ~Crystall();
 };
 
+//  ===Пользовательские кристаллы===
 class Smirnov1 : public Crystall
 {
 public:
@@ -67,20 +55,19 @@ public:
     void CalculatePoints();
 };
 
-
-
-
-
-
-
-
+class Romb : public Crystall
+{
+public:
+    Romb();
+    void CalculatePoints();
+};
 
 
 namespace Ui {
     class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow   //Класс главного окна
 {
     Q_OBJECT
 
@@ -94,6 +81,7 @@ private:
 
 public slots:
     void changeCrystall(int index);
+    void updateCrystall();
 };
 
 class canvas : public QWidget   //Класс "Холста", на котором будет отрисовываться изображение
@@ -110,12 +98,39 @@ public:
     //Методы класса
     void paintEvent(QPaintEvent *); //Отрисовка буфера в окне
 signals:
-    void updated(int ind);
+    void updated();
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent *event);
-
 };
+
+class Point3D   //Точка в 3D пространстве
+{
+public:
+    Point3D();
+    double x;
+    double y;
+    double z;
+    QString Show();
+    void Set(double _x, double _y, double _z);
+};
+
+template <typename T>
+class Matrix    //Матрицы
+{
+public:
+    Matrix(int row, int col, T** array = NULL);
+    ~Matrix();
+    Matrix operator * (Matrix<T> b);
+    T* operator [](size_t row); //Получить строку матрицы
+    void print();
+
+    size_t rows;
+    size_t cols;
+    T** data;
+};
+
+void drawLine3D(QPainter* painter, Point3D* a, Point3D* b, int dx = 0, int dy = 0, int y_min = -100, int y_max = 100, QColor color = QColor(0, 0, 0));
 
 #endif // MAINWINDOW_H
