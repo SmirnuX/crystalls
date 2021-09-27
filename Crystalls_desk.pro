@@ -14,9 +14,9 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     Smirnov.cpp \
     Misc.cpp \
-    crystalls.cpp \
-    matrix.cpp
+    crystalls.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    matrix.h
 
 FORMS    += mainwindow.ui

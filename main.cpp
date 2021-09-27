@@ -1,13 +1,27 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
+#include "matrix.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
     MainWindow w;
     w.show();
 
     return a.exec();
+}
+
+Matrix<double>* Point3D::to4D() //Преобразует точку в четырехмерную матрицу
+{
+    double* data = new double[4];
+    data[0] = x;
+    data[1] = y;
+    data[2] = z;
+    data[3] = 1;
+    Matrix<double>* res = new Matrix<double>(1,4,&data);
+    delete[] data;
+    return res;
 }
 
 QString Point3D::Show()
@@ -28,6 +42,13 @@ void Point3D::Set(double _x, double _y, double _z)
     x = _x;
     y = _y;
     z = _z;
+}
+
+void Point3D::Set(Matrix<double>* vec)
+{
+    x = vec->operator [](0)[0];
+    y = vec->operator [](0)[1];
+    z = vec->operator [](0)[2];
 }
 
 void drawLine3D(QPainter* painter, Point3D* a, Point3D* b, int dx, int dy, int y_min, int y_max, QColor color)
@@ -99,3 +120,4 @@ void drawLine3D(QPainter* painter, Point3D* a, Point3D* b, int dx, int dy, int y
         y += d_y;
     }
 }
+

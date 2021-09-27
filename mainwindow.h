@@ -11,6 +11,8 @@
 #include <QWheelEvent>
 #include <qmath.h>
 #include <math.h>
+#include "matrix.h"
+
 
 class Point3D;
 
@@ -24,8 +26,11 @@ public:
     Point3D* turned_vertexes;   //Массив вершин после изменений
     double a, b, g;    //Углы поворота
     double scale;  //Масштаб
+    double skewX, skewY, skewZ; //Растяжение
     double dx, dy, dz;  //Перенос
     bool reflectXOY, reflectXOZ, reflectYOZ;    //Отражение
+    Matrix<double>* Quaternion;
+    Matrix<double>** Points4D;
     //Массивы граней - edges_from - содержит номера начальных точек из vertexes, edged_to - номера конечных точек.
     //То есть, первая грань идет из vertexes[edges_from[0]] в vertexes[edges_to[0]]
     int* edges_from;
@@ -35,6 +40,7 @@ public:
     virtual void CalculatePoints() = 0;
     void AddEdge(int ind, int from, int to);
     void Change();
+    void Reset();
     void Turn(double alpha, double beta, double gamma);
     void Scale(double _scale);
     ~Crystall();
@@ -76,12 +82,14 @@ public:
     ~MainWindow();
     Crystall** crystalls;
 
+
 private:
     Ui::MainWindow *ui;
 
 public slots:
     void changeCrystall(int index);
     void updateCrystall();
+    void Reset();
 };
 
 class canvas : public QWidget   //Класс "Холста", на котором будет отрисовываться изображение
@@ -105,6 +113,9 @@ protected:
     void wheelEvent(QWheelEvent *event);
 };
 
+template <class T>
+class Matrix;
+
 class Point3D   //Точка в 3D пространстве
 {
 public:
@@ -112,25 +123,16 @@ public:
     double x;
     double y;
     double z;
+    Matrix<double>* to4D();
     QString Show();
     void Set(double _x, double _y, double _z);
+    void Set(Matrix<double>* vec);
 };
 
-template <typename T>
-class Matrix    //Матрицы
-{
-public:
-    Matrix(int row, int col, T** array = NULL);
-    ~Matrix();
-    Matrix operator * (Matrix<T> b);
-    T* operator [](size_t row); //Получить строку матрицы
-    void print();
 
-    size_t rows;
-    size_t cols;
-    T** data;
-};
 
 void drawLine3D(QPainter* painter, Point3D* a, Point3D* b, int dx = 0, int dy = 0, int y_min = -100, int y_max = 100, QColor color = QColor(0, 0, 0));
+void transformToMatrix(double a[4][4]);
+
 
 #endif // MAINWINDOW_H

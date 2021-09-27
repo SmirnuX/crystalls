@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-Romb::Romb() : Crystall(8,12,QString::fromLocal8Bit("Р РѕРјР±РѕСЌРґСЂ"))
+Romb::Romb() : Crystall(8,12,QString::fromLocal8Bit("Ромбоэдр"))
 {
     CalculatePoints();
     for (int i = 0; i < vertex_count; i++)
@@ -9,9 +9,9 @@ Romb::Romb() : Crystall(8,12,QString::fromLocal8Bit("Р РѕРјР±РѕСЌРґСЂ"))
 
 void Romb::CalculatePoints()
 {
-    //Р‘Р°Р·РёСЃ: e1(1,0,0); e2(cos a, sin a, 0); e3(cos a, 0, sin a)
-    double _a = M_PI / 4;  //РљР°РєРѕР№ С‚Рѕ СѓРіРѕР»
-    double w = 70;  //РЎС‚РѕСЂРѕРЅР°
+    //Базис: e1(1,0,0); e2(cos a, sin a, 0); e3(cos a, 0, sin a)
+    double _a = M_PI / 4;  //Какой то угол
+    double w = 70;  //Сторона
     double diag_x = w * (1 + cos(_a)*2);
     double diag_y = w * sin(_a);
     double diag_z = w * sin(_a);

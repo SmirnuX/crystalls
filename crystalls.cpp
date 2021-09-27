@@ -9,78 +9,91 @@ Crystall::Crystall(int vertex, int edges, QString _name)
     edges_from = new int[edges_count];
     edges_to = new int[edges_count];
     turned_vertexes = new Point3D[vertex_count];   //Массив вершин после изменений
+    Quaternion = new Matrix <double>(4,4);
+    Points4D = new Matrix<double>*[vertex_count];
+    for (int i = 0; i < vertex_count; i++)
+        Points4D[i] = new Matrix<double>(1,4);
+    Reset();
+}
+
+void Crystall::Reset()
+{
     a = 0;
     b = 0;
     g = 0;
     dx = 0;
     dy = 0;
     dz = 0;
-    reflectXOY = true;
-    reflectXOZ = true;
-    reflectYOZ = true;
+    reflectXOY = false;
+    reflectXOZ = false;
+    reflectYOZ = false;
     scale = 1;
+    skewX = 1;
+    skewY = 1;
+    skewZ = 1;
 }
 
 void Crystall::Change() //Изменение фигуры
 {
-
     //Инициализация
     for (int i = 0; i < vertex_count; i++)
     {
-        turned_vertexes[i].x = vertexes[i].x;
-        turned_vertexes[i].y = vertexes[i].y;
-        turned_vertexes[i].z = vertexes[i].z;
+        Points4D[i]->data[0][0] = vertexes[i].x;
+        Points4D[i]->data[0][1] = vertexes[i].y;
+        Points4D[i]->data[0][2] = vertexes[i].z;
+        Points4D[i]->data[0][3] = 1;
     }
+    double cosa = cos(a);
+    double sina = sin(a);
+    double cosb = cos(b);
+    double sinb = sin(b);
+    double cosg  =cos(g);
+    double sing = sin(g);
     //Поворот
-    for (int i = 0; i < vertex_count; i++)
-    {
-        int y = turned_vertexes[i].y;
-        int z = turned_vertexes[i].z;
+    double TurnOX[4][4] = {     {   1,      0,      0,  0},
+                                {   0, cosa,  sina, 0},
+                                {   0,-sina,  cosa, 0},
+                                {   0,      0,       0, 1}
+                                                            };
+    double TurnOY[4][4] = {     {  cosb,      0,-sinb, 0},
+                                {       0,      1,      0, 0},
+                                {  sinb,      0, cosb, 0},
+                                {       0,      0,      0, 1}
+                                                            };
+    double TurnOZ[4][4] = {     {  cosg, sing,  0, 0},
+                                { -sing, cosg,  0, 0},
+                                {       0,      0,  1, 0},
+                                {       0,      0,  0, 1}
+                                                            };
+    double Coefs[4][4] = { { scale * skewX * (reflectYOZ?-1.0:1.0),                               0,                               0,     0},
+                           {                               0, scale * skewY * (reflectXOZ?-1.0:1.0),                               0,     0},
+                           {                               0,                               0,  scale * skewZ* (reflectXOY?-1.0:1.0),     0},
+                           {                              0,                               0,                             0,     1}};
 
-        turned_vertexes[i].y = y * cos(a) + z * sin(a);
-        turned_vertexes[i].z = -y * sin(a) + z * cos(a);
-    }
-    for (int i = 0; i < vertex_count; i++)
-    {
-        int x = turned_vertexes[i].x;
-        int z = turned_vertexes[i].z;
 
-        turned_vertexes[i].x = x * cos(b) - z * sin(b);
-        turned_vertexes[i].z = x * sin(b) + z * cos(b);
-    }
+    Quaternion->SetFromStaticArray(Coefs);
+    for (int i = 0; i < vertex_count; i++)
+        *Points4D[i]*=*Quaternion;
+    Quaternion->SetFromStaticArray(TurnOX);
+    for (int i = 0; i < vertex_count; i++) //По оси OX
+        *Points4D[i]*=*Quaternion;
+    Quaternion->SetFromStaticArray(TurnOY);
+    for (int i = 0; i < vertex_count; i++)
+        *Points4D[i] *= *Quaternion;
+    Quaternion->SetFromStaticArray(TurnOZ);
+    for (int i = 0; i < vertex_count; i++)
+        *Points4D[i] *= *Quaternion;
+    //� астяжение и масштаб
+    double delta[4][4] = { { 1, 0, 0, 0},
+                           { 0, 1, 0, 0},
+                           { 0, 0, 1, 0},
+                           {dx,dy,dz, 1}};
+    Quaternion->SetFromStaticArray(delta);
     for (int i = 0; i < vertex_count; i++)
     {
-        int x = turned_vertexes[i].x;
-        int y = turned_vertexes[i].y;
-
-        turned_vertexes[i].x = x * cos(g) + y * sin(g);
-        turned_vertexes[i].y = -x * sin(g) + y * cos(g);
+        *Points4D[i]*=*Quaternion;
+        turned_vertexes[i].Set(Points4D[i]);
     }
-    //Отражение
-    for (int i = 0; i < vertex_count; i++)
-    {
-        if (reflectYOZ)
-            turned_vertexes[i].x = -turned_vertexes[i].x;
-        if (reflectXOY)
-            turned_vertexes[i].z = -turned_vertexes[i].z;
-        if (reflectXOZ)
-            turned_vertexes[i].y = -turned_vertexes[i].y;
-    }
-    //Масштаб
-    for (int i = 0; i < vertex_count; i++)
-    {
-        turned_vertexes[i].x *= scale;
-        turned_vertexes[i].y *= scale;
-        turned_vertexes[i].z *= scale;
-    }
-    //Перенос
-    for (int i = 0; i < vertex_count; i++)
-    {
-            turned_vertexes[i].x += dx;
-            turned_vertexes[i].y += dy;
-            turned_vertexes[i].z += dz;
-    }
-
 }
 
 void Crystall::Scale(double _scale)
@@ -135,16 +148,16 @@ void Crystall::Draw(QPainter* painter, bool gradient, bool numbers)
     y.Set(x_k * (sin(a)*sin(b)*cos(g)+cos(a)*sin(g)), y_k * (-sin(a)*sin(b)*sin(g)+cos(a)*cos(g)), z_k * -sin(a)*cos(b));
     z.Set(-x_k*(-cos(a)*sin(b)*cos(g)+sin(a)*sin(g)), -y_k*(cos(a)*sin(b)*sin(g)+sin(a)*cos(g)), -z_k*cos(a)*cos(b));  //Ось инвертирована
 
-    drawLine3D(painter, &center, &x, width-55, height-55, -55, 55, QColor(255,0,0));
-    drawLine3D(painter, &center, &y, width-55, height-55, -55, 55, QColor(0,255,0));
-    drawLine3D(painter, &center, &z, width-55, height-55, -55, 55, QColor(0,0,255));
+    drawLine3D(painter, &center, &x, width-60, height-60, -60, 60, QColor(255,0,0));
+    drawLine3D(painter, &center, &y, width-60, height-60, -60, 60, QColor(0,180,0));
+    drawLine3D(painter, &center, &z, width-60, height-60, -60, 60, QColor(0,0,255));
 
     painter->setPen(QColor(255,0,0));
-    painter->drawText(width-55 + x.x, height-55 + x.z, "x");
-    painter->setPen(QColor(0,255,0));
-    painter->drawText(width-55 + y.x, height-55 + y.z, "y");
+    painter->drawText(width-60 + x.x, height-60 + x.z, "x");
+    painter->setPen(QColor(0,180,0));
+    painter->drawText(width-60 + y.x, height-60 + y.z, "y");
     painter->setPen(QColor(0,0,255));
-    painter->drawText(width-55 + z.x, height-55 + z.z, "z");
+    painter->drawText(width-60 + z.x, height-60 + z.z, "z");
 
 
     //Отражение

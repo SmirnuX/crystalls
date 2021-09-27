@@ -23,8 +23,12 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
     connect(ui->positionX, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->positionY, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->positionZ, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    connect(ui->skewX, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    connect(ui->skewY, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    connect(ui->skewZ, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->gradientCheck, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));
     connect(ui->numbersCheck, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));
+    connect(ui->resetButton, SIGNAL(clicked()), this, SLOT(Reset()));
 
     ui->CrystallWidget->show_numbers = ui->numbersCheck->isChecked();
     ui->CrystallWidget->is_gradient = ui->gradientCheck->isChecked();
@@ -33,6 +37,30 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::Reset()
+{
+    ui->CrystallWidget->crystall->Reset();
+
+    ui->reflectXOY->setChecked(false);
+    ui->reflectXOZ->setChecked(false);
+    ui->reflectYOZ->setChecked(false);
+
+    ui->positionX->setValue(0);
+    ui->positionY->setValue(0);
+    ui->positionZ->setValue(0);
+
+    ui->skewX->setValue(100);
+    ui->skewY->setValue(100);
+    ui->skewZ->setValue(100);
+
+    ui->CrystallWidget->a = 0;
+    ui->CrystallWidget->b = 0;
+    ui->CrystallWidget->g = 0;
+
+    ui->CrystallWidget->crystall->Change();
+    updateCrystall();
 }
 
 void MainWindow::changeCrystall(int index)
@@ -61,6 +89,18 @@ void MainWindow::updateCrystall()
     ui->CrystallWidget->crystall->dx = ui->positionX->value();
     ui->CrystallWidget->crystall->dy = ui->positionY->value();
     ui->CrystallWidget->crystall->dz = -ui->positionZ->value();
+
+    ui->counterX->setValue(ui->positionX->value());
+    ui->counterY->setValue(ui->positionY->value());
+    ui->counterZ->setValue(ui->positionZ->value());
+
+    ui->counterSkewX->setValue((double)ui->skewX->value()/100);
+    ui->counterSkewY->setValue((double)ui->skewY->value()/100);
+    ui->counterSkewZ->setValue((double)ui->skewZ->value()/100);
+
+    ui->CrystallWidget->crystall->skewX = (double)ui->skewX->value()/100;
+    ui->CrystallWidget->crystall->skewY = (double)ui->skewY->value()/100;
+    ui->CrystallWidget->crystall->skewZ = (double)ui->skewZ->value()/100;
 
     ui->CrystallWidget->crystall->Change();
     ui->CrystallWidget->update();
