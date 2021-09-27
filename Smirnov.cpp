@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 
-Smirnov1::Smirnov1() : Crystall(8,18,QString::fromLocal8Bit("Дитригональная дипирамида"))
+Smirnov1::Smirnov1() : Crystall(8,18,12,QString::fromLocal8Bit("Дитригональная дипирамида"))
 {
+    //В базовом конструкторе Crystall указываются - количество вершин, количетсво ребер, количетсво граней и название кристалла
+    //Остальной конструктор изменению не подлежит
     CalculatePoints();
     for (int i = 0; i < vertex_count; i++)
         turned_vertexes[i].Set(vertexes[i].x, vertexes[i].y, vertexes[i].z);
@@ -12,8 +14,9 @@ void Smirnov1::CalculatePoints()
     int height = 200;
     int radius = 90;
     int smaller_radius = 75;
-    vertexes[0].Set(0, 0, height);
-    //Два равносторонних треугольниками с разными радиусами вписанных окружностей
+    //Необходимо вычислить все вершины, ребра и грани
+
+    vertexes[0].Set(0, 0, height);  //Пример вершины: vertexes[i].Set(x, y, z)
     vertexes[1].Set(radius * sin(0), radius * cos(0), 0);
     vertexes[3].Set(radius * sin(2 * M_PI / 3), radius * cos(2 * M_PI / 3), 0);
     vertexes[5].Set(radius * sin(4 * M_PI / 3), radius * cos(4 * M_PI / 3), 0);
@@ -24,7 +27,7 @@ void Smirnov1::CalculatePoints()
 
     vertexes[7].Set(0, 0, -height);
 
-    AddEdge(0, 1, 2);
+    AddEdge(0, 1, 2);   //Пример ребра: AddEdge(i, a, b); где i - индекс ребра, a и b - индексы начальной и конечной вершин
     AddEdge(1, 2, 3);
     AddEdge(2, 3, 4);
     AddEdge(3, 4, 5);
@@ -45,9 +48,28 @@ void Smirnov1::CalculatePoints()
     AddEdge(16, 0, 5);
     AddEdge(17, 0, 6);
 
+    faces[0].Set(0, 1, 2); //Пример грани: faces[i].Set(a, b, c), где a,b,c... - номера вершин, эту грань образующую
+    //Есть варианты facesSet для трех, четырех и пяти вершин. Если нужно больше, есть faces[i].Set(int* points, int count)
+    faces[1].Set(0, 2, 3);
+    faces[2].Set(0, 3, 4);
+    faces[3].Set(0, 4, 5);
+    faces[4].Set(0, 5, 6);
+    faces[5].Set(0, 6, 1);
+
+    faces[6].Set(7, 1, 2);
+    faces[7].Set(7, 2, 3);
+    faces[8].Set(7, 3, 4);
+    faces[9].Set(7, 4, 5);
+    faces[10].Set(7, 5, 6);
+    faces[11].Set(7, 6, 1);
+
+
+    for (int i = 0; i < faces_count; i++)
+        faces[i].SetSource(turned_vertexes);
+
 }
 
-Smirnov2::Smirnov2() : Crystall(38, 60, QString::fromLocal8Bit("Пентагонтриоктаэдр"))
+Smirnov2::Smirnov2() : Crystall(38, 60, 24, QString::fromLocal8Bit("Пентагонтриоктаэдр"))
 {
     CalculatePoints();
     for (int i = 0; i < vertex_count; i++)
@@ -196,4 +218,38 @@ void Smirnov2::CalculatePoints()
     AddEdge(57,27,17);
     AddEdge(58,33,3);
     AddEdge(59,19,3);
+
+    faces[0].Set(1, 30, 0, 13, 28);
+    faces[1].Set(24, 12, 32, 17, 11);
+    faces[2].Set(32, 17, 27, 3, 19);
+    faces[3].Set(32, 12, 1, 28, 19);
+    faces[4].Set(1, 12, 24, 2, 30);
+
+    faces[5].Set(27, 6, 36, 11, 17);
+    faces[6].Set(36, 11, 24, 18, 4);
+    faces[7].Set(24, 18, 34, 14, 2);
+    faces[8].Set(30, 2, 14, 26, 0);
+
+    faces[9].Set(6, 36, 4, 29, 22);
+    faces[10].Set(4, 29, 16, 34, 18);
+    faces[11].Set(34, 16, 9, 26, 14);
+    faces[12].Set(0, 13, 31, 20, 26);
+
+    faces[13].Set(19, 3, 33, 10, 28);
+    faces[14].Set(33, 10, 15, 25, 8);
+    faces[15].Set(25, 21, 37, 23, 8);
+    faces[16].Set(25, 5, 20, 31, 15);
+
+    faces[17].Set(10, 15, 31, 13, 28);
+    faces[18].Set(33, 3, 27, 23, 8);
+    faces[19].Set(23, 27, 6, 22, 37);
+    faces[20].Set(37, 22, 29, 7, 21);
+
+    faces[21].Set(35, 9, 16, 29, 7);
+    faces[22].Set(5, 35, 9, 26, 20);
+
+    faces[23].Set(25, 5, 35, 7, 21);
+
+    for (int i = 0; i < faces_count; i++)
+        faces[i].SetSource(turned_vertexes);
 }

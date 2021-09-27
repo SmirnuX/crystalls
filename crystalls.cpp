@@ -1,13 +1,15 @@
 #include "mainwindow.h"
 
-Crystall::Crystall(int vertex, int edges, QString _name)
+Crystall::Crystall(int vertex, int edges, int n_faces, QString _name)
 {
     vertex_count = vertex;   //РљРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ
     edges_count = edges;    //РљРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР±РµСЂ
+    faces_count = n_faces;
     name = _name;
     vertexes = new Point3D[vertex_count];
     edges_from = new int[edges_count];
     edges_to = new int[edges_count];
+    faces = new Polygon3D[faces_count];
     turned_vertexes = new Point3D[vertex_count];   //РњР°СЃСЃРёРІ РІРµСЂС€РёРЅ РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёР№
     Quaternion = new Matrix <double>(4,4);
     Points4D = new Matrix<double>*[vertex_count];
@@ -111,28 +113,47 @@ void Crystall::Turn(double alpha, double beta, double gamma)
 }
 
 
-void Crystall::Draw(QPainter* painter, bool gradient, bool numbers)
+void Crystall::Draw(QPainter* painter, struct param* settings)
 {
-    painter->setPen(QColor(0,0,255));
+    painter->setPen(QColor(0,0,0));
     int width = painter->window().width();
     int height = painter->window().height();
+    if (settings->intersec_zbuf)   //Метод удаления с помощью z-буфера
+    {
+        QImage img(width, height, QImage::Format_ARGB32);   //Инициализация изображения
+        img.fill(0);
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+                z_buffer[i][j] = INT_MAX;
+        }
+        for (int i = 0; i < faces_count; i++)
+        {
+            faces[i].DrawZ(&img, z_buffer, width/2, height/2, true, settings->show_zbuf);
+        }
+        painter->drawImage(0,0,img);
+    }
+    else
+    {
     for (int i = 0; i < edges_count; i++)
     {
-        if (gradient)
-            drawLine3D(painter, &turned_vertexes[edges_from[i]], &turned_vertexes[edges_to[i]], width/2, height/2);
-        else
-        {
-            QPoint a(width/2 + turned_vertexes[edges_from[i]].x, height/2 + turned_vertexes[edges_from[i]].z);
-            QPoint b(width/2 + turned_vertexes[edges_to[i]].x, height/2 + turned_vertexes[edges_to[i]].z);
-            painter->drawLine(a, b);
+            if (settings->gradient_lines)
+                drawLine3D(painter, &turned_vertexes[edges_from[i]], &turned_vertexes[edges_to[i]], width/2, height/2);
+            else
+            {
+                QPoint a(width/2 + turned_vertexes[edges_from[i]].x, height/2 + turned_vertexes[edges_from[i]].z);
+                QPoint b(width/2 + turned_vertexes[edges_to[i]].x, height/2 + turned_vertexes[edges_to[i]].z);
+                painter->drawLine(a, b);
+            }
         }
     }
-    if (numbers)
+    if (settings->show_vertices)
     {
-        painter->setPen(QColor(100,0,0));
+        painter->setPen(QColor(200,0,0));
         for (int i = 0; i < vertex_count; i++)
         {
-            painter->drawText(turned_vertexes[i].x + width/2, turned_vertexes[i].z + height/2, QString::number(i));
+            painter->drawEllipse(turned_vertexes[i].x - 2 + width/2, turned_vertexes[i].z + height/2 - 2, 4, 4);
+            painter->drawText(turned_vertexes[i].x + 4 + width/2, turned_vertexes[i].z + height/2, QString::number(i));
         }
     }
 

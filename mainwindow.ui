@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1082</width>
+    <width>1110</width>
     <height>500</height>
    </rect>
   </property>
@@ -18,23 +18,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>30</y>
       <width>291</width>
       <height>22</height>
      </rect>
     </property>
     <property name="frame">
      <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="CoordsView">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>291</width>
-      <height>371</height>
-     </rect>
     </property>
    </widget>
    <widget class="QFrame" name="CrystallFrame">
@@ -278,19 +268,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QLabel" name="coordsName">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>121</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Координаты вершин</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="numbersCheck">
     <property name="geometry">
      <rect>
@@ -337,7 +314,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>10</y>
+      <y>30</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -350,7 +327,7 @@
     <property name="geometry">
      <rect>
       <x>820</x>
-      <y>30</y>
+      <y>50</y>
       <width>121</width>
       <height>18</height>
      </rect>
@@ -363,7 +340,7 @@
     <property name="geometry">
      <rect>
       <x>820</x>
-      <y>50</y>
+      <y>70</y>
       <width>121</width>
       <height>18</height>
      </rect>
@@ -376,7 +353,7 @@
     <property name="geometry">
      <rect>
       <x>820</x>
-      <y>70</y>
+      <y>90</y>
       <width>121</width>
       <height>18</height>
      </rect>
@@ -389,8 +366,8 @@
     <property name="geometry">
      <rect>
       <x>800</x>
-      <y>100</y>
-      <width>281</width>
+      <y>120</y>
+      <width>311</width>
       <height>16</height>
      </rect>
     </property>
@@ -402,9 +379,9 @@
     <property name="geometry">
      <rect>
       <x>800</x>
-      <y>-4</y>
-      <width>281</width>
-      <height>31</height>
+      <y>20</y>
+      <width>311</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="orientation">
@@ -415,7 +392,7 @@
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>140</y>
+      <y>160</y>
       <width>201</width>
       <height>16</height>
      </rect>
@@ -443,7 +420,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>110</y>
+      <y>130</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -456,7 +433,7 @@
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>170</y>
+      <y>190</y>
       <width>201</width>
       <height>16</height>
      </rect>
@@ -481,7 +458,7 @@
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>200</y>
+      <y>220</y>
       <width>201</width>
       <height>16</height>
      </rect>
@@ -506,7 +483,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>140</y>
+      <y>160</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -522,7 +499,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>170</y>
+      <y>190</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -538,7 +515,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>200</y>
+      <y>220</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -554,8 +531,8 @@
     <property name="geometry">
      <rect>
       <x>800</x>
-      <y>230</y>
-      <width>281</width>
+      <y>250</y>
+      <width>311</width>
       <height>16</height>
      </rect>
     </property>
@@ -567,7 +544,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>270</y>
+      <y>290</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -583,7 +560,7 @@
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>270</y>
+      <y>290</y>
       <width>201</width>
       <height>16</height>
      </rect>
@@ -614,7 +591,7 @@
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>300</y>
+      <y>320</y>
       <width>201</width>
       <height>16</height>
      </rect>
@@ -642,7 +619,7 @@
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>330</y>
+      <y>350</y>
       <width>201</width>
       <height>16</height>
      </rect>
@@ -670,7 +647,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>330</y>
+      <y>350</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -686,7 +663,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>300</y>
+      <y>320</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -702,7 +679,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>240</y>
+      <y>260</y>
       <width>121</width>
       <height>16</height>
      </rect>
@@ -715,7 +692,7 @@
     <property name="geometry">
      <rect>
       <x>800</x>
-      <y>360</y>
+      <y>370</y>
       <width>281</width>
       <height>16</height>
      </rect>
@@ -728,7 +705,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>380</y>
+      <y>390</y>
       <width>261</width>
       <height>31</height>
      </rect>
@@ -748,9 +725,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="resetButton">
     <property name="geometry">
      <rect>
-      <x>820</x>
+      <x>840</x>
       <y>460</y>
-      <width>241</width>
+      <width>231</width>
       <height>23</height>
      </rect>
     </property>
@@ -771,7 +748,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>140</y>
+      <y>160</y>
       <width>31</width>
       <height>22</height>
      </rect>
@@ -802,7 +779,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>170</y>
+      <y>190</y>
       <width>31</width>
       <height>22</height>
      </rect>
@@ -833,7 +810,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>200</y>
+      <y>220</y>
       <width>31</width>
       <height>22</height>
      </rect>
@@ -864,7 +841,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>270</y>
+      <y>290</y>
       <width>31</width>
       <height>22</height>
      </rect>
@@ -898,7 +875,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>300</y>
+      <y>320</y>
       <width>31</width>
       <height>22</height>
      </rect>
@@ -932,7 +909,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1040</x>
-      <y>330</y>
+      <y>350</y>
       <width>31</width>
       <height>22</height>
      </rect>
@@ -958,6 +935,220 @@ p, li { white-space: pre-wrap; }
     <property name="value">
      <double>1.000000000000000</double>
     </property>
+   </widget>
+   <widget class="QLabel" name="coordsName_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Фигура</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>10</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Аффинные преобразования</string>
+    </property>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>291</width>
+      <height>371</height>
+     </rect>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <property name="tabsClosable">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="tab_L1">
+     <attribute name="title">
+      <string>Л/р 1</string>
+     </attribute>
+     <widget class="QListWidget" name="CoordsView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>261</width>
+        <height>271</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="coordsName">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Координаты вершин</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="coordsName_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>261</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Афинные преобразования</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_L2">
+     <attribute name="title">
+      <string>Л/р 2</string>
+     </attribute>
+     <widget class="QLabel" name="coordsName_5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>261</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Удаление невидимых линий методом Z-буфера для многогогранников</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="ZbufferBox">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>60</y>
+        <width>121</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Показать Z-буфер</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_L3">
+     <attribute name="title">
+      <string>Л/р 3</string>
+     </attribute>
+     <widget class="QLabel" name="coordsName_6">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>261</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Удаление невидимых линий методом Вейлера-Азертона</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_L4">
+     <attribute name="title">
+      <string>Л/р 4</string>
+     </attribute>
+     <widget class="QLabel" name="coordsName_7">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>261</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Закраска поверхностей методом Гуро</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
  </widget>

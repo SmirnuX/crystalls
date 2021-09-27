@@ -14,7 +14,16 @@
 #include "matrix.h"
 
 
-class Point3D;
+class Point3D; class Polygon3D;
+
+struct param    //Настройки отрисовки
+{
+    bool gradient_lines;    //Градиентные линии
+    bool show_vertices;     //Показывать номера вершин
+    bool intersec_zbuf;     //Отсечение невидимых линий методом Z-буфера
+    bool show_zbuf;         //Показывать Z-буфер
+    bool show_faces;    //Отрисовывать грани
+};
 
 class Crystall  //Базовый класс кристаллов
 {
@@ -22,8 +31,10 @@ public:
     QString name;   //Название кристалла
     int vertex_count;   //Количество вершин
     int edges_count;    //Количество ребер
+    int faces_count;    //Количество граней
     Point3D* vertexes;   //Массив вершин
     Point3D* turned_vertexes;   //Массив вершин после изменений
+    Polygon3D* faces;   //Массив граней
     double a, b, g;    //Углы поворота
     double scale;  //Масштаб
     double skewX, skewY, skewZ; //Растяжение
@@ -31,12 +42,14 @@ public:
     bool reflectXOY, reflectXOZ, reflectYOZ;    //Отражение
     Matrix<double>* Quaternion;
     Matrix<double>** Points4D;
+    double** z_buffer;
     //Массивы граней - edges_from - содержит номера начальных точек из vertexes, edged_to - номера конечных точек.
     //То есть, первая грань идет из vertexes[edges_from[0]] в vertexes[edges_to[0]]
     int* edges_from;
     int* edges_to;
-    Crystall(int vertex, int edges, QString _name);
-    void Draw(QPainter* painter, bool gradient, bool numbers);
+
+    Crystall(int vertex, int edges, int n_faces, QString _name);
+    void Draw(QPainter* painter, struct param* settings);
     virtual void CalculatePoints() = 0;
     void AddEdge(int ind, int from, int to);
     void Change();
@@ -58,6 +71,20 @@ class Smirnov2 : public Crystall
 {
 public:
     Smirnov2();
+    void CalculatePoints();
+};
+
+class Volodina1: public Crystall
+{
+public:
+    Volodina1();
+    void CalculatePoints();
+};
+
+class Volodina2: public Crystall
+{
+public:
+    Volodina2();
     void CalculatePoints();
 };
 
@@ -89,6 +116,7 @@ private:
 public slots:
     void changeCrystall(int index);
     void updateCrystall();
+    void changeLab(int index);
     void Reset();
 };
 
@@ -101,8 +129,7 @@ public:
     QPointF prev_pos;
     //Конструктор и деструктор
     canvas(QWidget* parent);
-    bool show_numbers;
-    bool is_gradient;
+    struct param parameters;
     //Методы класса
     void paintEvent(QPaintEvent *); //Отрисовка буфера в окне
 signals:
@@ -127,11 +154,78 @@ public:
     QString Show();
     void Set(double _x, double _y, double _z);
     void Set(Matrix<double>* vec);
+    void Set(Point3D& other)
+    {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+    }
+};
+
+class Polygon3D //поверхность в 3D-пространстве
+{
+public:
+    int size;
+    int* points;
+    Point3D* vertices;
+
+    Polygon3D()
+    {
+        size = 0;
+    }
+
+    void Set(int a, int b, int c)                           //Задать треугольник
+    {
+        size = 3;
+        points = new int[3];
+        points[0] = a;
+        points[1] = b;
+        points[2] = c;
+    }
+
+    void Set(int a, int b, int c, int d)                //Задать четырехугольник
+    {
+        size = 4;
+        points = new int[4];
+        points[0] = a;
+        points[1] = b;
+        points[2] = c;
+        points[3] = d;
+    }
+    void Set(int a, int b, int c, int d, int e)     //Задать пятиугольник
+    {
+        size = 5;
+        points = new int[5];
+        points[0] = a;
+        points[1] = b;
+        points[2] = c;
+        points[3] = d;
+        points[4] = e;
+    }
+    void Set(int* arr, int count)   //Задать n-угольник
+    {
+        points = arr;
+        size = count;
+    }
+
+    void SetSource(Point3D* vertix)
+    {
+        vertices = vertix;
+    }
+
+    Point3D Point(int i)
+    {
+        return vertices[points[i]];
+    }
+
+    void Draw(QPainter* painter, int x, int y, bool edges = true);
+    void DrawZ(QImage* img, double** z, int x, int y, bool edges = true, bool show_zbuf = true);
 };
 
 
 
 void drawLine3D(QPainter* painter, Point3D* a, Point3D* b, int dx = 0, int dy = 0, int y_min = -100, int y_max = 100, QColor color = QColor(0, 0, 0));
+void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx = 0, int dy = 0, int y_min = -100, int y_max = 100, QColor color = QColor(0, 0, 0), double** z = NULL);
 void transformToMatrix(double a[4][4]);
 
 

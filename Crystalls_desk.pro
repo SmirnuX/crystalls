@@ -14,7 +14,8 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     Smirnov.cpp \
     Misc.cpp \
-    crystalls.cpp
+    crystalls.cpp \
+    Volodina.cpp
 
 HEADERS  += mainwindow.h \
     matrix.h

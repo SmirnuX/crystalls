@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-Romb::Romb() : Crystall(8,12,QString::fromLocal8Bit("Ромбоэдр"))
+Romb::Romb() : Crystall(8,12,6,QString::fromLocal8Bit("Ромбоэдр"))
 {
     CalculatePoints();
     for (int i = 0; i < vertex_count; i++)
@@ -36,7 +36,7 @@ void Romb::CalculatePoints()
         }
         vertexes[i].Set(x - diag_x/2, y-diag_y/2, z-diag_z/2);
     }
-    AddEdge(0, 1, 3);
+    AddEdge(0, 1, 3);   //Первая грань
     AddEdge(1, 3, 7);
     AddEdge(2, 7, 5);
     AddEdge(3, 5, 1);
@@ -51,6 +51,17 @@ void Romb::CalculatePoints()
     AddEdge(10, 5, 4);
 
     AddEdge(11, 6, 4);
+
+    faces[0].Set(1, 3, 7, 5);
+    faces[1].Set(7, 3, 2, 6);
+    faces[2].Set(0, 4, 5, 1);
+    faces[3].Set(4, 5, 7, 6);
+    faces[4].Set(0, 2, 6, 4);
+
+    faces[5].Set(1, 3, 2, 0);
+
+    for (int i = 0; i < faces_count; i++)
+        faces[i].SetSource(turned_vertexes);
 
 }
 
