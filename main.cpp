@@ -176,7 +176,7 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
         }
     }
 
-    for (; c < c_max; c++)
+    for (; c <= c_max; c++)
     {
         float k = (y - y_min) / (y_max - y_min);
         if (k < 0.1)
@@ -288,7 +288,7 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
         if (Point(i).z > max_y)
             max_y = Point(i).z;
     }
-    int padding = 2;
+    int padding = 5;
     QImage buffer(max_x - min_x + 2*padding, max_y - min_y + 2*padding, QImage::Format_ARGB32); //ПРИ ЗАПИСИ СЮДА ПРИБАВЛЯТЬ PADDING
     buffer.fill(qRgba(0, 0, 0, 0));
 
@@ -311,7 +311,7 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
             b = Point(i+1);
         drawLine3D(&buffer, &a, &b, -min_x + padding, -min_y + padding, 0, 100, QColor(0,0,0), z_buffer);
     }
-    QRgb _color = qRgba(180, 255, 180, 150);
+    QRgb _color = qRgba(180, 255, 180, 0);
     //Отрисовка внутренностей
     for (int i = 0; i < buffer.height(); i++)
     {
@@ -345,6 +345,7 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
                             z_buffer[i][k] = sz;
                         buffer.setPixel(k, i, _color);
                     }
+                    inside = !inside;
                 }
                 if (edges)
                     continue;
@@ -376,7 +377,7 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
                             intensity = 0;
                         if (intensity > 255)
                             intensity = 255;
-                        img->setPixel(j+x+min_x, i+y+min_y, qRgb(intensity,intensity*0.5,intensity*0.5));
+                        img->setPixel(j+x+min_x, i+y+min_y, qRgb(255,intensity,0.7 * (255-intensity)));
                     }
                 }
             }
