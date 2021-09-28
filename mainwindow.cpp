@@ -21,22 +21,37 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
         ui->CrystallChoice->addItem(crystalls[i]->name);
         crystalls[i]->z_buffer = z_buffer;
     }
+    //Выбор кристаллов
     connect(ui->CrystallChoice, SIGNAL(activated(int)), this, SLOT(changeCrystall(int)));
     connect(ui->CrystallWidget, SIGNAL(updated()), this, SLOT(updateCrystall()));
+    //Отражение кристалла
     connect(ui->reflectXOY, SIGNAL(stateChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->reflectXOZ, SIGNAL(stateChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->reflectYOZ, SIGNAL(stateChanged(int)), this, SLOT(updateCrystall()));
+    //Перенос кристалла
     connect(ui->positionX, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->positionY, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->positionZ, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    //Растяжение кристалла
     connect(ui->skewX, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->skewY, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->skewZ, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
-    connect(ui->gradientCheck, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));
-    connect(ui->numbersCheck, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));
-    connect(ui->resetButton, SIGNAL(clicked()), this, SLOT(Reset()));
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(changeLab(int)));
-    connect(ui->ZbufferBox, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));
+    //Изменение цвета кристалла
+    connect(ui->colorSliderR, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    connect(ui->colorSliderR, SIGNAL(valueChanged(int)), ui->colorCounterR, SLOT(setValue(int)));
+    connect(ui->colorSliderG, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    connect(ui->colorSliderG, SIGNAL(valueChanged(int)), ui->colorCounterG, SLOT(setValue(int)));
+    connect(ui->colorSliderB, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    connect(ui->colorSliderB, SIGNAL(valueChanged(int)), ui->colorCounterB, SLOT(setValue(int)));
+
+    connect(ui->shadowBox, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));
+    connect(ui->paintFacesBox, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));    //Заливка кристалла
+    connect(ui->gradientCheck, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));    //Градиентные линии
+    connect(ui->numbersCheck, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));     //Отображение номеров
+    connect(ui->resetButton, SIGNAL(clicked()), this, SLOT(Reset()));                   //Сброс положения кристалла
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(changeLab(int)));    //Выбор лабораторной работы
+    connect(ui->ZbufferBox, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));       //Показать Z-буфер
+    connect(ui->zbuf_number_box, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));  //Скрывать вершины, не видимые по Z-буферу
 
 }
 
@@ -87,6 +102,15 @@ void MainWindow::updateCrystall()
     ui->CrystallWidget->parameters.show_vertices = ui->numbersCheck->isChecked();
     ui->CrystallWidget->parameters.gradient_lines = ui->gradientCheck->isChecked();
     ui->CrystallWidget->parameters.show_zbuf = ui->ZbufferBox->isChecked();
+    ui->CrystallWidget->parameters.show_zbuf_numbers = ui->zbuf_number_box->isChecked();
+    ui->CrystallWidget->parameters.show_faces = ui->paintFacesBox->isChecked();
+    ui->CrystallWidget->parameters.faces_shade = ui->shadowBox->isChecked();
+    ui->CrystallWidget->parameters.faces_color = qRgb(ui->colorSliderR->value(),
+                                                      ui->colorSliderG->value(),
+                                                      ui->colorSliderB->value());
+
+    ui->zbuf_number_box->setEnabled(ui->numbersCheck->isChecked());
+    ui->shadowBox->setEnabled(ui->paintFacesBox->isChecked());
     ui->CoordsView->clear();
     if (ui->CrystallWidget->crystall == NULL)
         return;
@@ -111,10 +135,11 @@ void MainWindow::updateCrystall()
     ui->CrystallWidget->crystall->skewY = (double)ui->skewY->value()/100;
     ui->CrystallWidget->crystall->skewZ = (double)ui->skewZ->value()/100;
 
+
     ui->CrystallWidget->crystall->Change();
     ui->CrystallWidget->update();
 
-    for (int i = 0; i < ui->CrystallWidget->crystall->vertex_count; i++)
+    for (int i = 0; i < ui->CrystallWidget->crystall->vertex_count; i++)    //Занесение вершин в список
     {
         QString coord = QString::number(i) + ".  ";
         if (coord.size() > 4)
@@ -146,6 +171,10 @@ canvas::canvas(QWidget* parent) : QWidget(parent)
     parameters.intersec_zbuf = false;
     parameters.show_zbuf = false;
     parameters.show_vertices = false;
+    parameters.show_zbuf_numbers = true;
+    parameters.faces_color = qRgb(0, 0, 0);
+    parameters.show_faces = false;
+    parameters.faces_shade = false;
     a = 0;
     b = 0;
     g = 0;

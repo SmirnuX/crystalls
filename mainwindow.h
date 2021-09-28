@@ -13,7 +13,6 @@
 #include <math.h>
 #include "matrix.h"
 
-
 class Point3D; class Polygon3D;
 
 struct param    //Настройки отрисовки
@@ -23,6 +22,9 @@ struct param    //Настройки отрисовки
     bool intersec_zbuf;     //Отсечение невидимых линий методом Z-буфера
     bool show_zbuf;         //Показывать Z-буфер
     bool show_faces;    //Отрисовывать грани
+    QRgb faces_color;   //Цвет граней
+    bool faces_shade;   //"Тени" на гранях
+    bool show_zbuf_numbers;  //Скрывать невидимые вершины
 };
 
 class Crystall  //Базовый класс кристаллов
@@ -219,7 +221,7 @@ public:
     }
 
     void Draw(QPainter* painter, int x, int y, bool edges = true);
-    void DrawZ(QImage* img, double** z, int x, int y, bool edges = true, bool show_zbuf = true);
+    void DrawZ(QImage* img, double** z, int x, int y, bool shade = true, bool show_zbuf = true, QRgb faces_color = qRgb(255,255,255));
 };
 
 

@@ -129,7 +129,10 @@ void Crystall::Draw(QPainter* painter, struct param* settings)
         }
         for (int i = 0; i < faces_count; i++)
         {
-            faces[i].DrawZ(&img, z_buffer, width/2, height/2, true, settings->show_zbuf);
+            if (settings->show_faces)
+                faces[i].DrawZ(&img, z_buffer, width/2, height/2, settings->faces_shade, settings->show_zbuf, settings->faces_color);
+            else
+                faces[i].DrawZ(&img, z_buffer, width/2, height/2, false, settings->show_zbuf);
         }
         painter->drawImage(0,0,img);
     }
@@ -147,13 +150,23 @@ void Crystall::Draw(QPainter* painter, struct param* settings)
             }
         }
     }
-    if (settings->show_vertices)
+    if (settings->show_vertices)    //Отрисовка вершин
     {
         painter->setPen(QColor(200,0,0));
         for (int i = 0; i < vertex_count; i++)
         {
-            painter->drawEllipse(turned_vertexes[i].x - 2 + width/2, turned_vertexes[i].z + height/2 - 2, 4, 4);
-            painter->drawText(turned_vertexes[i].x + 4 + width/2, turned_vertexes[i].z + height/2, QString::number(i));
+            int vx = turned_vertexes[i].x + width/2;
+            int vy = turned_vertexes[i].z + height/2;
+            int epsilon = 5;
+            if (settings->show_zbuf_numbers && settings->intersec_zbuf)
+            {
+                if (vx < 0 || vx >= width || vy < 0 || vy >= height)
+                    continue;
+                if (turned_vertexes[i].y - epsilon > z_buffer[vy][vx])
+                    continue;
+            }
+            painter->drawEllipse(vx-2, vy-2, 4, 4);
+            painter->drawText(vx+4, vy, QString::number(i));
         }
     }
 

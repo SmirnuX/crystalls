@@ -69,7 +69,7 @@ void Smirnov1::CalculatePoints()
 
 }
 
-Smirnov2::Smirnov2() : Crystall(38, 60, 24, QString::fromLocal8Bit("Пентагонтриоктаэдр"))
+Smirnov2::Smirnov2() : Crystall(38, 60, 24, QString::fromLocal8Bit("Пентагонтриоктаэдр")) //24
 {
     CalculatePoints();
     for (int i = 0; i < vertex_count; i++)

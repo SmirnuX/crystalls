@@ -176,9 +176,28 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
         }
     }
 
+    //Отрисовка начальной и конечной точки
+    float k = (a->y - y_min) / (y_max - y_min);
+    if (k < 0.1)
+        k = 0.1;
+    if (k > 1)
+        k = 1;
+    painter->setPixel(dx + a->x, dy + a->z, qRgba(color.red(), color.green(), color.blue(), 255 * (1-k)));
+    k = (b->y - y_min) / (y_max - y_min);
+        if (k < 0.1)
+            k = 0.1;
+        if (k > 1)
+            k = 1;
+    painter->setPixel(dx + b->x, dy + b->z, qRgba(color.red(), color.green(), color.blue(), 255 * (1-k)));
+    if (z != NULL)
+    {
+        z[(int)(dy + a->z)][(int)(dx + a->x)]= a->y;
+        z[(int)(dy + b->z)][(int)(dx + b->x)]= b->y;
+    }
+
     for (; c <= c_max; c++)
     {
-        float k = (y - y_min) / (y_max - y_min);
+        k = (y - y_min) / (y_max - y_min);
         if (k < 0.1)
             k = 0.1;
         if (k > 1)
@@ -205,7 +224,6 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
         }
         qt += d;
         y += d_y;
-
     }
 }
 
@@ -273,7 +291,7 @@ void Polygon3D::Draw(QPainter* painter, int x, int y, bool edges)
     painter->drawImage(x + min_x, y + min_y, buffer);
 }
 
-void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool show_zbuf)
+void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool show_zbuf, QRgb faces_color)
 {
     //Нахождение границ
     int min_y = INT_MAX, max_y = INT_MIN, min_x = INT_MAX, max_x = INT_MIN;
@@ -288,7 +306,7 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
         if (Point(i).z > max_y)
             max_y = Point(i).z;
     }
-    int padding = 5;
+    int padding = 10;
     QImage buffer(max_x - min_x + 2*padding, max_y - min_y + 2*padding, QImage::Format_ARGB32); //ПРИ ЗАПИСИ СЮДА ПРИБАВЛЯТЬ PADDING
     buffer.fill(qRgba(0, 0, 0, 0));
 
@@ -311,7 +329,6 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
             b = Point(i+1);
         drawLine3D(&buffer, &a, &b, -min_x + padding, -min_y + padding, 0, 100, QColor(0,0,0), z_buffer);
     }
-    QRgb _color = qRgba(180, 255, 180, 0);
     //Отрисовка внутренностей
     for (int i = 0; i < buffer.height(); i++)
     {
@@ -343,12 +360,11 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
                             z_buffer[i][k] = (sz + (ez-sz) * (k - sx)/(ex-sx));
                         else
                             z_buffer[i][k] = sz;
-                        buffer.setPixel(k, i, _color);
+                        buffer.setPixel(k, i, faces_color);
                     }
                     inside = !inside;
                 }
-                if (edges)
-                    continue;
+                continue;
             } else if (stripe)
             {
                 stripe = false;
@@ -368,16 +384,32 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool edges, bool sh
                 if (z_buffer[i][j] < z[screen_y][screen_x])
                 {
                     z[screen_y][screen_x] = z_buffer[i][j];
-
-                    img->setPixel(j+x+min_x, i+y+min_y, buffer.pixel(j, i));
-                    if (show_zbuf)
+                    int intensity;
+                    if (shade)
                     {
-                        int intensity = 255 - (((double)z_buffer[i][j] + 250) / 500 * 255);
+                        intensity = 255 - (((double)z_buffer[i][j] + 250) / 500 * 255);
                         if (intensity < 0)
                             intensity = 0;
                         if (intensity > 255)
                             intensity = 255;
-                        img->setPixel(j+x+min_x, i+y+min_y, qRgb(255,intensity,0.7 * (255-intensity)));
+                        img->setPixel(screen_x, screen_y, qRgb((double)intensity/255 * qRed(buffer.pixel(j, i)),
+                                                               (double)intensity/255 * qGreen(buffer.pixel(j, i)),
+                                                               (double)intensity/255 * qBlue(buffer.pixel(j, i))
+                                                               ));
+                    }
+                    else
+                        img->setPixel(screen_x, screen_y, buffer.pixel(j, i));
+                    if (show_zbuf)  //Показать z-буфер
+                    {
+                        if (!shade)
+                        {
+                            intensity = 255 - (((double)z_buffer[i][j] + 250) / 500 * 255);
+                            if (intensity < 0)
+                                intensity = 0;
+                            if (intensity > 255)
+                                intensity = 255;
+                        }
+                        img->setPixel(screen_x, screen_y, qRgb(255,intensity,0.7 * (255-intensity)));
                     }
                 }
             }
