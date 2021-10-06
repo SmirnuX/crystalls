@@ -136,6 +136,10 @@ void Crystall::Draw(QPainter* painter, struct param* settings)
         }
         painter->drawImage(0,0,img);
     }
+    else if (settings->intersec_veyler)
+    {
+        DrawVeyler(painter);
+    }
     else
     {
     for (int i = 0; i < edges_count; i++)
@@ -182,9 +186,9 @@ void Crystall::Draw(QPainter* painter, struct param* settings)
     y.Set(x_k * (sin(a)*sin(b)*cos(g)+cos(a)*sin(g)), y_k * (-sin(a)*sin(b)*sin(g)+cos(a)*cos(g)), z_k * -sin(a)*cos(b));
     z.Set(-x_k*(-cos(a)*sin(b)*cos(g)+sin(a)*sin(g)), -y_k*(cos(a)*sin(b)*sin(g)+sin(a)*cos(g)), -z_k*cos(a)*cos(b));  //Ось инвертирована
 
-    drawLine3D(painter, &center, &x, width-60, height-60, -60, 60, QColor(255,0,0));
-    drawLine3D(painter, &center, &y, width-60, height-60, -60, 60, QColor(0,180,0));
-    drawLine3D(painter, &center, &z, width-60, height-60, -60, 60, QColor(0,0,255));
+    drawLine3D(painter, &center, &x, width-60, height-60, 0, 60, QColor(255,0,0));
+    drawLine3D(painter, &center, &y, width-60, height-60, 0, 60, QColor(0,180,0));
+    drawLine3D(painter, &center, &z, width-60, height-60, 0, 60, QColor(0,0,255));
 
     painter->setPen(QColor(255,0,0));
     painter->drawText(width-60 + x.x, height-60 + x.z, "x");
@@ -197,6 +201,8 @@ void Crystall::Draw(QPainter* painter, struct param* settings)
     //Отражение
 
 }
+
+
 
 void Crystall::AddEdge(int ind, int from, int to)
 {

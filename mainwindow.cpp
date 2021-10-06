@@ -154,9 +154,17 @@ void MainWindow::changeLab(int index)
     {
     case 0:
         ui->CrystallWidget->parameters.intersec_zbuf = false;
+        ui->CrystallWidget->parameters.intersec_veyler = false;
         break;
     case 1:
         ui->CrystallWidget->parameters.intersec_zbuf = true;
+        ui->CrystallWidget->parameters.intersec_veyler = false;
+        break;
+    case 2:
+        ui->CrystallWidget->parameters.intersec_zbuf = false;
+        ui->CrystallWidget->parameters.intersec_veyler = true;
+        break;
+    case 3:
         break;
     }
     updateCrystall();
@@ -175,6 +183,7 @@ canvas::canvas(QWidget* parent) : QWidget(parent)
     parameters.faces_color = qRgb(0, 0, 0);
     parameters.show_faces = false;
     parameters.faces_shade = false;
+    parameters.intersec_veyler = false;
     a = 0;
     b = 0;
     g = 0;

@@ -175,9 +175,9 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
             y = a->y;
         }
     }
-
+    float k;
     //Отрисовка начальной и конечной точки
-    float k = (a->y - y_min) / (y_max - y_min);
+    k = (a->y - y_min) / (y_max - y_min);
     if (k < 0.1)
         k = 0.1;
     if (k > 1)
@@ -195,7 +195,7 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
         z[(int)(dy + b->z)][(int)(dx + b->x)]= b->y;
     }
 
-    for (; c <= c_max; c++)
+    for (; c <= ceil(c_max); c++)
     {
         k = (y - y_min) / (y_max - y_min);
         if (k < 0.1)
@@ -225,6 +225,7 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
         qt += d;
         y += d_y;
     }
+
 }
 
 void Polygon3D::Draw(QPainter* painter, int x, int y, bool edges)
