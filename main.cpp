@@ -175,9 +175,9 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
             y = a->y;
         }
     }
-
+    float k;
     //Отрисовка начальной и конечной точки
-    float k = (a->y - y_min) / (y_max - y_min);
+    k = (a->y - y_min) / (y_max - y_min);
     if (k < 0.1)
         k = 0.1;
     if (k > 1)
@@ -191,11 +191,13 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
     painter->setPixel(dx + b->x, dy + b->z, qRgba(color.red(), color.green(), color.blue(), 255 * (1-k)));
     if (z != NULL)
     {
-        z[(int)(dy + a->z)][(int)(dx + a->x)]= a->y;
-        z[(int)(dy + b->z)][(int)(dx + b->x)]= b->y;
+        if ((int)(dy + a->z) >= 0 && (int)(dy + a->z) < painter->height() && (int)(dx + a->x) >= 0 && (int)(dx + a->x) < painter->width())
+            z[(int)(dy + a->z)][(int)(dx + a->x)]= a->y;
+        if ((int)(dy + b->z) >= 0 && (int)(dy + b->z) < painter->height() && (int)(dx + b->x) >= 0 && (int)(dx + b->x) < painter->width())
+            z[(int)(dy + b->z)][(int)(dx + b->x)]= b->y;
     }
 
-    for (; c <= c_max; c++)
+    for (; c <= ceil(c_max); c++)
     {
         k = (y - y_min) / (y_max - y_min);
         if (k < 0.1)
@@ -225,6 +227,7 @@ void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, int y_m
         qt += d;
         y += d_y;
     }
+
 }
 
 void Polygon3D::Draw(QPainter* painter, int x, int y, bool edges)
@@ -241,6 +244,18 @@ void Polygon3D::Draw(QPainter* painter, int x, int y, bool edges)
             min_y = Point(i).z;
         if (Point(i).z > max_y)
             max_y = Point(i).z;
+    }
+    if (max_y > painter->window().height())  //ВРЕМЕННО
+        max_y = painter->window().height();
+    if (max_x > painter->window().width())
+        max_x = painter->window().width();
+    if (max_x < 0)
+    {
+        max_x = 0;
+    }
+    if (max_y < 0)
+    {
+        max_y = 0;
     }
     QImage buffer(max_x - min_x + 1, max_y - min_y + 1, QImage::Format_ARGB32);
     buffer.fill(qRgba(0, 0, 0, 0));
@@ -293,7 +308,6 @@ void Polygon3D::Draw(QPainter* painter, int x, int y, bool edges)
 
 void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool show_zbuf, QRgb faces_color)
 {
-    //Нахождение границ
     int min_y = INT_MAX, max_y = INT_MIN, min_x = INT_MAX, max_x = INT_MIN;
     for (int i = 0; i < size; i++)
     {
@@ -307,10 +321,10 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool sh
             max_y = Point(i).z;
     }
     int padding = 10;
-    QImage buffer(max_x - min_x + 2*padding, max_y - min_y + 2*padding, QImage::Format_ARGB32); //ПРИ ЗАПИСИ СЮДА ПРИБАВЛЯТЬ PADDING
+    QImage buffer(max_x - min_x + 2*padding, max_y - min_y + 2*padding, QImage::Format_ARGB32); //I?E CAIENE N?AA I?EAAAE?OU PADDING
     buffer.fill(qRgba(0, 0, 0, 0));
 
-    double** z_buffer = new double*[max_y - min_y + 2*padding]; // [строки][столбцы]
+    double** z_buffer = new double*[max_y - min_y + 2*padding]; // [no?iee][noieaou]
     for (int i = 0; i < max_y - min_y + 2*padding; i++)
     {
         z_buffer[i] = new double[max_x - min_x + 2*padding];
@@ -318,7 +332,7 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool sh
             z_buffer[i][j] = INT_MAX;
     }
 
-    //Отрисовка границ
+    //Io?eniaea a?aieo
     for (int i = 0; i < size; i++)
     {
         Point3D a, b;
@@ -329,14 +343,14 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool sh
             b = Point(i+1);
         drawLine3D(&buffer, &a, &b, -min_x + padding, -min_y + padding, 0, 100, QColor(0,0,0), z_buffer);
     }
-    //Отрисовка внутренностей
+    //Io?eniaea aioo?aiiinoae
     for (int i = 0; i < buffer.height(); i++)
     {
         bool inside = false;
         bool stripe = false;
-        int sx=0, ex=0; //Начало и конец полосы
-        double sz=0, ez=0;  //Начальны и конечные значения z
-        for (int j = 0; j < buffer.width(); j++)    //Двигаемся по строке вправо
+        int sx=0, ex=0; //Ia?aei e eiiao iieinu
+        double sz=0, ez=0;  //Ia?aeuiu e eiia?iua cia?aiey z
+        for (int j = 0; j < buffer.width(); j++)    //Aaeaaainy ii no?iea ai?aai
         {
             if (qAlpha(buffer.pixel(j, i)) > 0)
             {
@@ -345,16 +359,16 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool sh
                     inside = !inside;
                     stripe = true;
                 }
-                if (inside)    //Начало "полосы"
+                if (inside)    //Ia?aei "iieinu"
                 {
                     sx = j+1;
                     sz = z_buffer[i][j];
                 }
                 else
                 {
-                    ex = j;   //Конец "полосы"
+                    ex = j;   //Eiiao "iieinu"
                     ez = z_buffer[i][j];
-                    for (int k = sx; k < ex; k++)   //Закраска полосы
+                    for (int k = sx; k < ex; k++)   //Cae?anea iieinu
                     {
                         if (sx != ex)
                             z_buffer[i][k] = (sz + (ez-sz) * (k - sx)/(ex-sx));
@@ -371,10 +385,10 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool sh
             }
         }
     }
-    //Применение к уже имеющемуся изображению
+    //I?eiaiaiea e o?a eia?uaiony ecia?a?aie?
     for (int i = 0; i < buffer.height(); i++)
     {
-        for (int j = 0; j < buffer.width(); j++)    //Двигаемся по строке вправо
+        for (int j = 0; j < buffer.width(); j++)    //Aaeaaainy ii no?iea ai?aai
         {
             int screen_x = j + min_x + x - padding;
             int screen_y = i + min_y + y - padding;
@@ -399,7 +413,7 @@ void Polygon3D::DrawZ(QImage* img, double** z, int x, int y, bool shade, bool sh
                     }
                     else
                         img->setPixel(screen_x, screen_y, buffer.pixel(j, i));
-                    if (show_zbuf)  //Показать z-буфер
+                    if (show_zbuf)  //Iieacaou z-aooa?
                     {
                         if (!shade)
                         {

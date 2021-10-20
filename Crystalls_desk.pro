@@ -15,9 +15,12 @@ SOURCES += main.cpp\
     Smirnov.cpp \
     Misc.cpp \
     crystalls.cpp \
-    Volodina.cpp
+    Volodina.cpp \
+    weyler.cpp \
+    Borodina.cpp
 
 HEADERS  += mainwindow.h \
-    matrix.h
+    matrix.h \
+    TODO.h
 
 FORMS    += mainwindow.ui

@@ -71,11 +71,11 @@ void Volodina1::CalculatePoints()
     AddEdge(11, 6, 1);
 
     faces[0].Set(1, 2, 0, 6);
-    faces[1].Set(5, 4, 0, 6);
+    faces[1].Set(5, 6, 0, 4);
     faces[2].Set(2, 3, 4, 0);
-    faces[3].Set(1, 2, 3, 7);
-    faces[4].Set(5, 6, 1, 7);
-    faces[5].Set(3, 4, 5, 7);
+    faces[3].Set(1, 7, 3, 2);
+    faces[4].Set(5, 7, 1, 6);
+    faces[5].Set(3, 7, 5, 4);
 
     for (int i = 0; i < faces_count; i++)
         faces[i].SetSource(turned_vertexes);

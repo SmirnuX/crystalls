@@ -7,19 +7,19 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
 {
     ui->setupUi(this);
     ui->CrystallWidget->update();
-    int count = 4;
+    int count = 7;
     crystalls = new Crystall*[count];
     crystalls[0] = new Smirnov1();
     crystalls[1] = new Smirnov2();
     crystalls[2] = new Volodina1();
-    crystalls[3] = new Romb();
-    double** z_buffer = new double*[ui->CrystallWidget->height()];  //Z-буфер для каждого кристалла
-    for (int i = 0; i < ui->CrystallWidget->height(); i++)
-        z_buffer[i] = new double[ui->CrystallWidget->width()];
-    for(int i = 0; i < count; i++)
+    crystalls[3] = new Borodina1();
+    crystalls[4] = new Borodina2();
+    crystalls[5] = new Romb();
+    crystalls[6] = new Cube();
+
+    for (int i = 0; i < count; i++)
     {
         ui->CrystallChoice->addItem(crystalls[i]->name);
-        crystalls[i]->z_buffer = z_buffer;
     }
     //Выбор кристаллов
     connect(ui->CrystallChoice, SIGNAL(activated(int)), this, SLOT(changeCrystall(int)));
@@ -52,6 +52,14 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(changeLab(int)));    //Выбор лабораторной работы
     connect(ui->ZbufferBox, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));       //Показать Z-буфер
     connect(ui->zbuf_number_box, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));  //Скрывать вершины, не видимые по Z-буферу
+
+    connect(ui->ShowNormals, SIGNAL(toggled(bool)), this, SLOT(updateCrystall()));      //Показать нормали
+    //Изменение угла света
+    connect(ui->lightX, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    connect(ui->lightZ, SIGNAL(valueChanged(int)), this, SLOT(updateCrystall()));
+    //Изменение яркости
+    connect(ui->Brightness, SIGNAL(valueChanged(int)),  this, SLOT(updateCrystall()));
+    connect(ui->Ambient, SIGNAL(valueChanged(int)),  this, SLOT(updateCrystall()));
 
 }
 
@@ -109,9 +117,21 @@ void MainWindow::updateCrystall()
                                                       ui->colorSliderG->value(),
                                                       ui->colorSliderB->value());
 
+    ui->CrystallWidget->parameters.show_normals = ui->ShowNormals->isChecked();
+    ui->CrystallWidget->parameters.k_diff = (double)ui->Brightness->value() / 10.0;
+    ui->CrystallWidget->parameters.k_amb = (double)ui->Ambient->value() / 10.0;
+
+    double radius = 1000;
+
+    ui->CrystallWidget->parameters.light_x = - radius * (sin((double)ui->lightX->value()/100.0) - sin((double)ui->lightZ->value()/100.0));
+    ui->CrystallWidget->parameters.light_y = - radius * (cos((double)ui->lightX->value()/100.0) + sin((double)ui->lightZ->value()/100.0));
+    ui->CrystallWidget->parameters.light_z = - radius * sin((double)ui->lightZ->value()/100.0);
+
+
     ui->zbuf_number_box->setEnabled(ui->numbersCheck->isChecked());
     ui->shadowBox->setEnabled(ui->paintFacesBox->isChecked());
     ui->CoordsView->clear();
+    ui->FacesView->clear();
     if (ui->CrystallWidget->crystall == NULL)
         return;
 
@@ -146,6 +166,23 @@ void MainWindow::updateCrystall()
             coord.chop(1);
         ui->CoordsView->addItem(coord + ui->CrystallWidget->crystall->turned_vertexes[i].Show());
     }
+
+    if (ui->CrystallWidget->parameters.intersec_veyler) //Занесение граней в список
+    {
+        for (int i = 0; i < ui->CrystallWidget->crystall->vec.size(); i++)
+        {
+            QString new_item = QString::number(i + 1) + ".  ";
+            if (new_item.size() > 4)
+                new_item.chop(1);
+            for (int j = 0; j < ui->CrystallWidget->crystall->vec[i]->size; j++)
+            {
+                new_item += QString::number(ui->CrystallWidget->crystall->vec[i]->points[j]);
+                if (j < ui->CrystallWidget->crystall->vec[i]->size - 1)
+                    new_item += "-";
+            }
+            ui->FacesView->addItem(new_item);
+        }
+    }
 }
 
 void MainWindow::changeLab(int index)
@@ -153,10 +190,25 @@ void MainWindow::changeLab(int index)
     switch (index)
     {
     case 0:
-        ui->CrystallWidget->parameters.intersec_zbuf = false;
-        break;
     case 1:
+        ui->CrystallWidget->parameters.intersec_zbuf = false;
+        ui->CrystallWidget->parameters.intersec_veyler = false;
+        ui->CrystallWidget->parameters.guro = false;
+        break;
+    case 2:
         ui->CrystallWidget->parameters.intersec_zbuf = true;
+        ui->CrystallWidget->parameters.intersec_veyler = false;
+        ui->CrystallWidget->parameters.guro = false;
+        break;
+    case 3:
+        ui->CrystallWidget->parameters.intersec_zbuf = false;
+        ui->CrystallWidget->parameters.intersec_veyler = true;
+        ui->CrystallWidget->parameters.guro = false;
+        break;
+    case 4:
+        ui->CrystallWidget->parameters.intersec_zbuf = false;
+        ui->CrystallWidget->parameters.intersec_veyler = false;
+        ui->CrystallWidget->parameters.guro = true;
         break;
     }
     updateCrystall();
@@ -175,9 +227,19 @@ canvas::canvas(QWidget* parent) : QWidget(parent)
     parameters.faces_color = qRgb(0, 0, 0);
     parameters.show_faces = false;
     parameters.faces_shade = false;
+    parameters.intersec_veyler = false;
+    parameters.guro = false;              //Закраска тела методом Гуро
+    parameters.show_normals = false;
+    parameters.light_x = 0;
+    parameters.light_y = -1000;
+    parameters.light_z = 0;
+    parameters.k_diff = 2.5;          //Коэффициент яркости источника освещения
+    parameters.k_amb = 0.1;           //Коэффициент фонового освещения
     a = 0;
     b = 0;
-    g = 0;
+    g = 0;  
+    img = NULL;   //Инициализация изображения
+    z_buffer = NULL;
 }
 
 void canvas::paintEvent(QPaintEvent *)
@@ -185,7 +247,20 @@ void canvas::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.fillRect(0,0,width(),height(),QColor(255,255,255));
     if (crystall != NULL)
-        crystall->Draw(&painter, &parameters);
+        crystall->Draw(&painter, &parameters, &img, &z_buffer);
+    if (frame_count == 0)
+        timer.start();
+    else
+    {
+        painter.setPen(QColor(0,0,0));
+        painter.drawText(0, 0, 100, 100, 0, "FPS: " + QString::number(frame_count / (float)timer.elapsed() * 1000.0, 'f', 0));
+    }
+    frame_count++;
+    if (timer.elapsed() > 1000)
+    {
+        timer.restart();
+        frame_count = 1;
+    }
 }
 
 void canvas::mousePressEvent(QMouseEvent *event)
@@ -213,7 +288,13 @@ void canvas::wheelEvent(QWheelEvent *event)
 {
     if (crystall == NULL)
         return;
-    crystall->Scale(crystall->scale + (double)(event->delta())/1000);
+    if (crystall->scale + (double)(event->delta())/1000 < 0.1)
+        crystall->Scale(0.1);
+    else if (crystall->scale + (double)(event->delta())/1000 > 4)
+        crystall->Scale(4);
+    else
+        crystall->Scale(crystall->scale + (double)(event->delta())/1000);
+
     update();
     updated();
 }

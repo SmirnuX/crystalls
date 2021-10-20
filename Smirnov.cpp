@@ -48,13 +48,13 @@ void Smirnov1::CalculatePoints()
     AddEdge(16, 0, 5);
     AddEdge(17, 0, 6);
 
-    faces[0].Set(0, 1, 2); //Пример грани: faces[i].Set(a, b, c), где a,b,c... - номера вершин, эту грань образующую
+    faces[0].Set(0, 2, 1); //Пример грани: faces[i].Set(a, b, c), где a,b,c... - номера вершин, эту грань образующую
     //Есть варианты facesSet для трех, четырех и пяти вершин. Если нужно больше, есть faces[i].Set(int* points, int count)
-    faces[1].Set(0, 2, 3);
-    faces[2].Set(0, 3, 4);
-    faces[3].Set(0, 4, 5);
-    faces[4].Set(0, 5, 6);
-    faces[5].Set(0, 6, 1);
+    faces[1].Set(0, 3, 2);
+    faces[2].Set(0, 4, 3);
+    faces[3].Set(0, 5, 4);
+    faces[4].Set(0, 6, 5);
+    faces[5].Set(0, 1, 6);
 
     faces[6].Set(7, 1, 2);
     faces[7].Set(7, 2, 3);
@@ -220,33 +220,33 @@ void Smirnov2::CalculatePoints()
     AddEdge(59,19,3);
 
     faces[0].Set(1, 30, 0, 13, 28);
-    faces[1].Set(24, 12, 32, 17, 11);
-    faces[2].Set(32, 17, 27, 3, 19);
+    faces[1].Set(32, 17, 11, 24, 12);
+    faces[2].Set(19, 3, 27, 17, 32);
     faces[3].Set(32, 12, 1, 28, 19);
-    faces[4].Set(1, 12, 24, 2, 30);
+    faces[4].Set(30, 2, 24, 12, 1);
 
     faces[5].Set(27, 6, 36, 11, 17);
-    faces[6].Set(36, 11, 24, 18, 4);
+    faces[6].Set(4, 18, 24, 11, 36);
     faces[7].Set(24, 18, 34, 14, 2);
     faces[8].Set(30, 2, 14, 26, 0);
 
-    faces[9].Set(6, 36, 4, 29, 22);
+    faces[9].Set(22, 29, 4, 36, 6);
     faces[10].Set(4, 29, 16, 34, 18);
     faces[11].Set(34, 16, 9, 26, 14);
-    faces[12].Set(0, 13, 31, 20, 26);
+    faces[12].Set(26, 20, 31, 13, 0);
 
-    faces[13].Set(19, 3, 33, 10, 28);
+    faces[13].Set(28, 10, 33, 3, 19);
     faces[14].Set(33, 10, 15, 25, 8);
     faces[15].Set(25, 21, 37, 23, 8);
-    faces[16].Set(25, 5, 20, 31, 15);
+    faces[16].Set(15, 31, 20, 5, 25);
 
-    faces[17].Set(10, 15, 31, 13, 28);
-    faces[18].Set(33, 3, 27, 23, 8);
-    faces[19].Set(23, 27, 6, 22, 37);
-    faces[20].Set(37, 22, 29, 7, 21);
+    faces[17].Set(28, 13, 31, 15, 10);
+    faces[18].Set(8, 23, 27, 3, 33);
+    faces[19].Set(37, 22, 6, 27, 23);
+    faces[20].Set(21, 7, 29, 22, 37);
 
-    faces[21].Set(35, 9, 16, 29, 7);
-    faces[22].Set(5, 35, 9, 26, 20);
+    faces[21].Set(7, 29, 16, 9, 35);
+    faces[22].Set(20, 26, 9, 35, 5);
 
     faces[23].Set(25, 5, 35, 7, 21);
 
