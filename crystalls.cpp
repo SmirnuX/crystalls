@@ -54,8 +54,8 @@ void Crystall::Change() //РР·РјРµРЅРµРЅРёРµ С„РёРіСѓСЂС‹
     }
     double cosa = cos(a);
     double sina = sin(a);
-    double cosb = cos(b);
-    double sinb = sin(b);
+    double cosb = cos(-b);
+    double sinb = sin(-b);
     double cosg  =cos(g);
     double sing = sin(g);
     //РџРѕРІРѕСЂРѕС‚
@@ -210,14 +210,20 @@ void Crystall::Draw(QPainter* painter, struct param* settings, QImage** img, dou
 
         for (int i = 0; i < vertex_count; i++)
         {
-            if (count[i] > 0)
+            if (count[i] > 0)   //Нормализация
             {
+                /*
                 vert_normals[i].x /= count[i];
                 vert_normals[i].y /= count[i];
                 vert_normals[i].z /= count[i];
+                */
+                double len = vert_normals[i].x * vert_normals[i].x +
+                             vert_normals[i].y * vert_normals[i].y +
+                             vert_normals[i].z * vert_normals[i].z;
+                vert_normals[i].x /= len;
+                vert_normals[i].y /= len;
+                vert_normals[i].z /= len;
             }
-
-            //Запись вместо координаты X - интенсивности свечения - от 0 до 1
 
             Point3D dist(   settings->light_x - turned_vertexes[i].x,
                             settings->light_y - turned_vertexes[i].y,
@@ -340,6 +346,7 @@ void Crystall::Draw(QPainter* painter, struct param* settings, QImage** img, dou
 
 }
 
+/*
 void Crystall::DrawInterpolated(QImage* img, int num, double** z, QRgb color)
 {
     int min_y = INT_MAX, max_y = INT_MIN, min_x = INT_MAX, max_x = INT_MIN;
@@ -429,7 +436,7 @@ void Crystall::DrawInterpolated(QImage* img, int num, double** z, QRgb color)
                 max_dist = dist;
         }
     }
-    qDebug() << max_dist;
+    //qDebug() << max_dist;
 
     for (int i = 0; i < buffer.height(); i++)   //Применение к изображению
     {
@@ -481,7 +488,7 @@ void Crystall::DrawInterpolated(QImage* img, int num, double** z, QRgb color)
     for (int i = 0; i < max_y - min_y + 2*padding; i++)
         delete z_buffer[i];
     delete[] z_buffer;
-}
+}*/
 
 
 void Crystall::AddEdge(int ind, int from, int to)

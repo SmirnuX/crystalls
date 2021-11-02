@@ -7,15 +7,16 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
 {
     ui->setupUi(this);
     ui->CrystallWidget->update();
-    int count = 7;
+    int count = 8;
     crystalls = new Crystall*[count];
     crystalls[0] = new Smirnov1();
     crystalls[1] = new Smirnov2();
     crystalls[2] = new Volodina1();
-    crystalls[3] = new Borodina1();
-    crystalls[4] = new Borodina2();
-    crystalls[5] = new Romb();
-    crystalls[6] = new Cube();
+    crystalls[3] = new Volodina2();
+    crystalls[4] = new Borodina1();
+    crystalls[5] = new Borodina2();
+    crystalls[6] = new Romb();
+    crystalls[7] = new Cube();
 
     for (int i = 0; i < count; i++)
     {
@@ -23,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
     }
     //Выбор кристаллов
     connect(ui->CrystallChoice, SIGNAL(activated(int)), this, SLOT(changeCrystall(int)));
-    connect(ui->CrystallWidget, SIGNAL(updated()), this, SLOT(updateCrystall()));
+    connect(ui->CrystallWidget, SIGNAL(updated()), this, SLOT(mouseUpdateCrystall()));
     //Отражение кристалла
     connect(ui->reflectXOY, SIGNAL(stateChanged(int)), this, SLOT(updateCrystall()));
     connect(ui->reflectXOZ, SIGNAL(stateChanged(int)), this, SLOT(updateCrystall()));
@@ -60,6 +61,14 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
     //Изменение яркости
     connect(ui->Brightness, SIGNAL(valueChanged(int)),  this, SLOT(updateCrystall()));
     connect(ui->Ambient, SIGNAL(valueChanged(int)),  this, SLOT(updateCrystall()));
+    //Изменение значений в счетчиках
+    connect(ui->angleA, SIGNAL(valueChanged(double)), this, SLOT(angleAUpdateCrystall()));
+    connect(ui->angleB, SIGNAL(valueChanged(double)), this, SLOT(updateCrystall()));
+    connect(ui->angleG, SIGNAL(valueChanged(double)), this, SLOT(angleGUpdateCrystall()));
+    connect(ui->scale, SIGNAL(valueChanged(double)), this, SLOT(updateCrystall()));
+    connect(ui->counterX, SIGNAL(valueChanged(int)), ui->positionX, SLOT(setValue(int)));
+    connect(ui->counterY, SIGNAL(valueChanged(int)), ui->positionY, SLOT(setValue(int)));
+    connect(ui->counterZ, SIGNAL(valueChanged(int)), ui->positionZ, SLOT(setValue(int)));
 
 }
 
@@ -88,6 +97,13 @@ void MainWindow::Reset()
     ui->CrystallWidget->b = 0;
     ui->CrystallWidget->g = 0;
 
+    ui->angleA->setValue(0);
+    ui->angleB->setValue(0);
+    ui->angleG->setValue(0);
+    ui->scale->setValue(1);
+
+
+
     ui->CrystallWidget->crystall->Change();
     updateCrystall();
 }
@@ -102,6 +118,26 @@ void MainWindow::changeCrystall(int index)
                             QString::fromLocal8Bit("; Ребер: ") + QString::number(ui->CrystallWidget->crystall->edges_count) +
                             QString::fromLocal8Bit("; Граней: ") + QString::number(ui->CrystallWidget->crystall->faces_count));
     }
+    updateCrystall();
+}
+
+void MainWindow::mouseUpdateCrystall()
+{
+    ui->angleA->setValue(ui->CrystallWidget->a);
+    ui->angleG->setValue(ui->CrystallWidget->g);
+    ui->scale->setValue(ui->CrystallWidget->crystall->scale);
+    updateCrystall();
+}
+
+void MainWindow::angleAUpdateCrystall()
+{
+    ui->CrystallWidget->a = ui->angleA->value();
+    updateCrystall();
+}
+
+void MainWindow::angleGUpdateCrystall()
+{
+    ui->CrystallWidget->g = ui->angleG->value();
     updateCrystall();
 }
 
@@ -123,9 +159,15 @@ void MainWindow::updateCrystall()
 
     double radius = 1000;
 
-    ui->CrystallWidget->parameters.light_x = - radius * (sin((double)ui->lightX->value()/100.0) - sin((double)ui->lightZ->value()/100.0));
-    ui->CrystallWidget->parameters.light_y = - radius * (cos((double)ui->lightX->value()/100.0) + sin((double)ui->lightZ->value()/100.0));
-    ui->CrystallWidget->parameters.light_z = - radius * sin((double)ui->lightZ->value()/100.0);
+    ui->CrystallWidget->parameters.light_x = radius * (sin((double)ui->lightX->value()/100.0));
+    ui->CrystallWidget->parameters.light_y = - radius * (cos((double)ui->lightX->value()/100.0));
+    ui->CrystallWidget->parameters.light_z = - radius * sin((double)ui->lightZ->value()/200.0);
+
+    ui->CrystallWidget->crystall->scale = ui->scale->value();
+
+    ui->CrystallWidget->b = ui->angleB->value();
+
+    ui->CrystallWidget->crystall->Turn(ui->CrystallWidget->a, ui->CrystallWidget->b, ui->CrystallWidget->g);
 
 
     ui->zbuf_number_box->setEnabled(ui->numbersCheck->isChecked());
@@ -277,11 +319,12 @@ void canvas::mouseMoveEvent(QMouseEvent *event)
     double delta_y = - event->posF().y() + prev_pos.y();
     g += delta_x/100;
     a += delta_y/100;
-    crystall->Turn(a,b,g);
-    update();
-    updated();
+    //qDebug()<<delta_x<<" "<<g;
     prev_pos.setX(event->posF().x());
     prev_pos.setY(event->posF().y());
+    //crystall->Turn(a,b,g);
+    //update();
+    updated();
 }
 
 void canvas::wheelEvent(QWheelEvent *event)

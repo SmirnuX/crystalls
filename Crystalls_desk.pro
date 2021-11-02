@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     crystalls.cpp \
     Volodina.cpp \
     weyler.cpp \
-    Borodina.cpp
+    Borodina.cpp \
+    gouraud.cpp
 
 HEADERS  += mainwindow.h \
     matrix.h \

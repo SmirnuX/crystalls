@@ -157,6 +157,9 @@ private:
 
 public slots:
     void changeCrystall(int index);
+    void mouseUpdateCrystall();
+    void angleAUpdateCrystall();
+    void angleGUpdateCrystall();
     void updateCrystall();
     void changeLab(int index);
     void Reset();
@@ -369,6 +372,7 @@ std::vector<Point2D> Polygon3Dto2D(Polygon3D in);
 
 void drawLine3D(QPainter* painter, Point3D* a, Point3D* b, int dx = 0, int dy = 0, int y_min = -100, int y_max = 100, QColor color = QColor(0, 0, 0));
 void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx = 0, int dy = 0, int y_min = -100, int y_max = 100, QColor color = QColor(0, 0, 0), double** z = NULL);
+void drawLine3D(QImage* painter, Point3D* a, Point3D* b, int dx, int dy, QRgb color, double** z, double a_int, double b_int);   //Отрисовка линии с интерполяцией
 void transformToMatrix(double a[4][4]);
 
 

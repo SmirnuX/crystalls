@@ -223,7 +223,7 @@ void Smirnov2::CalculatePoints()
     faces[1].Set(32, 17, 11, 24, 12);
     faces[2].Set(19, 3, 27, 17, 32);
     faces[3].Set(32, 12, 1, 28, 19);
-    faces[4].Set(30, 2, 24, 12, 1);
+    faces[4].Set(1, 12, 24, 2, 30);
 
     faces[5].Set(27, 6, 36, 11, 17);
     faces[6].Set(4, 18, 24, 11, 36);
@@ -245,7 +245,7 @@ void Smirnov2::CalculatePoints()
     faces[19].Set(37, 22, 6, 27, 23);
     faces[20].Set(21, 7, 29, 22, 37);
 
-    faces[21].Set(7, 29, 16, 9, 35);
+    faces[21].Set(35, 9, 16, 29, 7);
     faces[22].Set(20, 26, 9, 35, 5);
 
     faces[23].Set(25, 5, 35, 7, 21);
