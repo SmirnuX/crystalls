@@ -128,6 +128,11 @@ void Crystall::Draw(QPainter* painter, struct param* settings, QImage** img, dou
     //Инициализация изображения и Z-буфера
     if (*img == NULL)
         *img = new QImage(width, height, QImage::Format_ARGB32);
+    if ((*img)->width() != width)   //Если разрешение поменялось
+    {
+        delete *img;
+        *img = new QImage(width, height, QImage::Format_ARGB32);
+    }
     if (*z_buffer == NULL)
     {
         *z_buffer = new double*[height];
@@ -311,6 +316,8 @@ void Crystall::Draw(QPainter* painter, struct param* settings, QImage** img, dou
     }
 
     //Отрисовка осей
+    if (lowres)
+        return;
     Point3D center, x, y, z;
     center.Set(0, 0, 0);
     double x_k, y_k, z_k, k = 50;

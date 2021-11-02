@@ -14,7 +14,11 @@
 #include <math.h>
 #include "matrix.h"
 
+#define SCALE 0.5   //Пониженное разрешение
+
 class Point3D; class Polygon3D;
+
+extern bool lowres;
 
 struct param    //Настройки отрисовки
 {

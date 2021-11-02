@@ -70,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
     connect(ui->counterY, SIGNAL(valueChanged(int)), ui->positionY, SLOT(setValue(int)));
     connect(ui->counterZ, SIGNAL(valueChanged(int)), ui->positionZ, SLOT(setValue(int)));
 
+    connect(ui->lowRes, SIGNAL(stateChanged(int)), this, SLOT(updateCrystall()));
+
 }
 
 MainWindow::~MainWindow()
@@ -143,8 +145,13 @@ void MainWindow::angleGUpdateCrystall()
 
 void MainWindow::updateCrystall()
 {
+    lowres = ui->lowRes->isChecked();
+
     ui->CrystallWidget->parameters.show_vertices = ui->numbersCheck->isChecked();
-    ui->CrystallWidget->parameters.gradient_lines = ui->gradientCheck->isChecked();
+    if (!lowres)
+        ui->CrystallWidget->parameters.gradient_lines = ui->gradientCheck->isChecked();
+    else
+        ui->CrystallWidget->parameters.gradient_lines = false;
     ui->CrystallWidget->parameters.show_zbuf = ui->ZbufferBox->isChecked();
     ui->CrystallWidget->parameters.show_zbuf_numbers = ui->zbuf_number_box->isChecked();
     ui->CrystallWidget->parameters.show_faces = ui->paintFacesBox->isChecked();
@@ -253,7 +260,8 @@ void MainWindow::changeLab(int index)
         ui->CrystallWidget->parameters.guro = true;
         break;
     }
-    updateCrystall();
+    if (ui->CrystallWidget->crystall != NULL)
+        updateCrystall();
 }
 
 canvas::canvas(QWidget* parent) : QWidget(parent)
@@ -287,9 +295,14 @@ canvas::canvas(QWidget* parent) : QWidget(parent)
 void canvas::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.fillRect(0,0,width(),height(),QColor(255,255,255));
+    if (lowres)
+        painter.setWindow(0, 0, width() * SCALE, height() * SCALE);
+
+    painter.fillRect(0,0,painter.window().width(),painter.window().height(),QColor(255,255,255));
     if (crystall != NULL)
         crystall->Draw(&painter, &parameters, &img, &z_buffer);
+    if (lowres)
+        return;
     if (frame_count == 0)
         timer.start();
     else

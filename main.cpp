@@ -2,10 +2,12 @@
 #include "mainwindow.h"
 #include "matrix.h"
 
+bool lowres;
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
+    lowres = false;
     MainWindow w;
     w.show();
 
