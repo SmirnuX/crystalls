@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
 {
     ui->setupUi(this);
     ui->CrystallWidget->update();
-    int count = 8;
+    int count = 10;
     crystalls = new Crystall*[count];
     crystalls[0] = new Smirnov1();
     crystalls[1] = new Smirnov2();
@@ -15,8 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :   //Конструктор главного окна
     crystalls[3] = new Volodina2();
     crystalls[4] = new Borodina1();
     crystalls[5] = new Borodina2();
-    crystalls[6] = new Romb();
-    crystalls[7] = new Cube();
+    crystalls[6] = new Shumilin1();
+    crystalls[7] = new Shumilin2();
+    crystalls[8] = new Romb();
+    crystalls[9] = new Cube();
 
     for (int i = 0; i < count; i++)
     {

@@ -127,6 +127,20 @@ public:
     void CalculatePoints();
 };
 
+class Shumilin1: public Crystall
+{
+public:
+    Shumilin1();
+    void CalculatePoints();
+};
+
+class Shumilin2: public Crystall
+{
+public:
+    Shumilin2();
+    void CalculatePoints();
+};
+
 class Romb : public Crystall
 {
 public:
@@ -313,7 +327,9 @@ public:
     }
     void Set(int* arr, int count)   //Задать n-угольник
     {
-        points = arr;
+        points = new int[count];
+        for (int i = 0; i < count; i++)
+            points[i] = arr[i];
         size = count;
     }
 
